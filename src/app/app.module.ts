@@ -1,7 +1,13 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './controllers/app.controller';
 import { AppService } from './services/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TokenMiddleware } from 'src/utils/middlewares/token.middleware';
 
 @Module({
   imports: [
@@ -19,4 +25,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    return consumer
+      .apply(TokenMiddleware)
+      .exclude(
+        { path: '/api/v1/auth/login', method: RequestMethod.POST },
+        { path: '/api/v1/auth/register', method: RequestMethod.POST },
+      )
+      .forRoutes('*');
+  }
+}
