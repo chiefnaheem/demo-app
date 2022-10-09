@@ -18,6 +18,15 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, nullable: false })
   lastName: string;
 
+  toResponseObject() {
+    const { id, email, firstName, lastName } = this;
+    return { id, email, firstName, lastName };
+  }
+
+  async comparePassword(attempt: string) {
+    return await bcrypt.compare(attempt, this.password);
+  }
+
   @BeforeInsert() emailToLowerCase() {
     this.email = this.email.toLowerCase();
   }
