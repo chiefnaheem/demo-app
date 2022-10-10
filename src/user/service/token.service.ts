@@ -14,9 +14,9 @@ export class TokenService {
     console.log(process.env.TOKEN_SECRET, process.env.JWT_LIFESPAN, data);
     return new Promise((resolve, reject) => {
       jwt.sign(
-        {id: data},
+        { id: data },
         process.env.TOKEN_SECRET as string,
-        { expiresIn: process.env.JWT_LIFESPAN as string},
+        { expiresIn: process.env.JWT_LIFESPAN as string },
         (err, decoded) => {
           if (err) {
             console.log('err');

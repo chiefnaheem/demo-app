@@ -1,5 +1,12 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { TransactionEntity } from 'src/transaction/entity/transaction.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -17,6 +24,9 @@ export class UserEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   lastName: string;
+
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
+  transactions: TransactionEntity[];
 
   toResponseObject() {
     const { id, email, firstName, lastName } = this;

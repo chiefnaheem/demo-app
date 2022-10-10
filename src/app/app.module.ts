@@ -11,10 +11,17 @@ import { ConfigModule } from '@nestjs/config';
 import { TokenMiddleware } from 'src/utils/middlewares/token.middleware';
 import { UserModule } from 'src/user/user.module';
 import { UserEntity } from 'src/user/entity/user.entity';
+import { WalletModule } from 'src/wallet/wallet.module';
+import { WalletEntity } from 'src/wallet/entity/wallet.entity';
+import { WalletTransactionEntity } from 'src/wallet/entity/walletTransaction.entity';
+import { TransactionEntity } from 'src/transaction/entity/transaction.entity';
+import { TransactionModule } from 'src/transaction/transaction.module';
 
 @Module({
   imports: [
     UserModule,
+    WalletModule,
+    TransactionModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.HOST,
@@ -22,7 +29,12 @@ import { UserEntity } from 'src/user/entity/user.entity';
       username: 'root',
       password: '#NAHeem199',
       database: 'lendqr',
-      entities: [UserEntity],
+      entities: [
+        UserEntity,
+        WalletEntity,
+        WalletTransactionEntity,
+        TransactionEntity,
+      ],
       synchronize: true,
     }),
     ConfigModule.forRoot({
