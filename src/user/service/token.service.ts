@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
+// /* eslint-disable @typescript-eslint/no-empty-function */
 import {
   BadRequestException,
   Injectable,
@@ -10,22 +10,18 @@ import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class TokenService {
-  constructor() {}
-
-  tokenize({
-    data,
-    expiresIn = process.env.JWT_LIFESPAN,
-  }: {
-    data: string;
-    expiresIn?: string;
-  }): Promise<string> {
+  tokenize(data: string): Promise<string> {
+    console.log(process.env.TOKEN_SECRET, process.env.JWT_LIFESPAN, data);
     return new Promise((resolve, reject) => {
       jwt.sign(
-        data,
-        process.env.TOKEN_SECRET,
-        { expiresIn },
+        {id: data},
+        process.env.TOKEN_SECRET as string,
+        { expiresIn: process.env.JWT_LIFESPAN as string},
         (err, decoded) => {
-          if (err) reject(new InternalServerErrorException(err));
+          if (err) {
+            console.log('err');
+            reject(new InternalServerErrorException(err));
+          }
           resolve(decoded);
         },
       );
@@ -54,10 +50,8 @@ export class TokenService {
   /**function that abstract generation of jwt and refresh token */
   async generateTokens(data: string) {
     // generate jwt
-    const authorizationToken = await this.tokenize({
-      data,
-      expiresIn: process.env.JWT_LIFESPAN,
-    });
+    const authorizationToken = await this.tokenize(data);
+    console.log('hi');
     return { authorizationToken };
   }
   catch(e) {

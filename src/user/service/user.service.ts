@@ -17,7 +17,7 @@ export class UserService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async register(user: RegisterDto): Promise<UserEntity> {
+  async register(user: RegisterDto): Promise<any> {
     try {
       const { email, password, firstName, lastName } = user;
       const userExists = await this.userRepository.findOne({
@@ -32,8 +32,10 @@ export class UserService {
         firstName,
         lastName,
       });
-      await this.userRepository.save(userEntity);
-      return userEntity;
+      //dont return password
+      const createdUser = await this.userRepository.save(userEntity);
+      const { password: _, ...userData } = createdUser;
+      return userData;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -48,12 +50,15 @@ export class UserService {
       throw new UnauthorizedException('invalid credentials');
     }
     const isPasswordValid = await userEntity.comparePassword(password);
+    console.log(isPasswordValid);
     if (!isPasswordValid) {
       throw new UnauthorizedException('invalid credentials');
     }
+    console.log(userEntity.id);
     const { authorizationToken } = await this.tokenService.generateTokens(
       userEntity.id,
     );
+    console.log(authorizationToken);
     return { authorizationToken };
   }
 }
